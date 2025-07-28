@@ -1,17 +1,15 @@
-from flask import Flask, request, jsonify
+from fastapi import FastAPI
+from pydantic import BaseModel
 
-app = Flask(__name__)
+app = FastAPI()
 
-@app.route('/', methods=['GET'])
-def home():
-    return "Welcome to the simple API!"
+class Item(BaseModel):
+    data: dict
 
-@app.route('/postdata', methods=['POST'])
-def post_data():
-    data = request.json
-    if not data:
-        return jsonify({'error': 'No JSON data provided'}), 400
-    return jsonify({'you_sent': data}), 200
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the FastAPI example"}
 
-if __name__ == '__main__':
-    app.run(debug=True)
+@app.post("/postdata")
+def post_data(item: Item):
+    return {"received_data": item.data}
